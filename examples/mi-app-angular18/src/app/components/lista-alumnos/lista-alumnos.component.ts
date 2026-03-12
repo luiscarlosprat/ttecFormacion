@@ -25,58 +25,60 @@ interface Alumno {
     DialogModule,
     FormsModule,
     DialogoAlumnoComponent,
-    ToastModule,
+    ToastModule
   ],
   templateUrl: './lista-alumnos.component.html',
   styleUrls: ['./lista-alumnos.component.css'],
-  providers: [MessageService],
+  providers: [MessageService]
 })
 export class ListaAlumnosComponent {
-  alumnos: Alumno[] = [
-    { id: 1, nombre: 'Laura García', curso: 'Angular Básico', nota: 8.5 },
-    { id: 2, nombre: 'Carlos Pérez', curso: 'TypeScript Avanzado', nota: 9.1 },
-    { id: 3, nombre: 'Ana López', curso: 'PrimeNG UI', nota: 7.8 },
-  ];
+
+  alumnos: Alumno[] = [];
 
   filtro = '';
   mostrarDialogo = false;
-  alumnoSeleccionado: Alumno = { id: 0, nombre: '', curso: '', nota: 0 };
+
+  alumnoSeleccionado: Alumno = {
+    id: 0,
+    nombre: '',
+    curso: '',
+    nota: 0
+  };
 
   constructor(private messageService: MessageService) {}
 
+  ngOnInit(): void {
+    this.cargarAlumnos();
+  }
+
+  async cargarAlumnos() {
+    try {
+      const response = await fetch('http://localhost:2502/api/alumnos');
+      const data = await response.json();
+      this.alumnos = data;
+    } catch (error) {
+      console.error('Error cargando alumnos', error);
+    }
+  }
+
   get alumnosFiltrados(): Alumno[] {
     if (!this.filtro.trim()) return this.alumnos;
-    const term = this.filtro.toLowerCase();
-    return this.alumnos.filter(
-      (a) =>
-        a.nombre.toLowerCase().includes(term) ||
-        a.curso.toLowerCase().includes(term)
+
+    return this.alumnos.filter(a =>
+      a.nombre.toLowerCase().includes(this.filtro.toLowerCase()) ||
+      a.curso.toLowerCase().includes(this.filtro.toLowerCase())
     );
   }
 
   abrirDialogo() {
-    this.alumnoSeleccionado = { id: 0, nombre: '', curso: '', nota: 0 };
-    this.mostrarDialogo = true;
-  }
+    this.alumnoSeleccionado = {
+      id: 0,
+      nombre: '',
+      curso: '',
+      nota: 0
+    };
 
-  guardarAlumno(alumno: Alumno) {
-    if (alumno.id === 0) {
-      alumno.id = this.alumnos.length + 1;
-      this.alumnos.push(alumno);
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Guardado',
-        detail: 'Alumno agregado correctamente.',
-      });
-    } else {
-      const index = this.alumnos.findIndex((a) => a.id === alumno.id);
-      if (index >= 0) this.alumnos[index] = alumno;
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Actualizado',
-        detail: 'Alumno actualizado.',
-      });
-    }
+    this.mostrarDialogo = true;
   }
 
   editarAlumno(alumno: Alumno) {
@@ -84,12 +86,35 @@ export class ListaAlumnosComponent {
     this.mostrarDialogo = true;
   }
 
+  guardarAlumno(alumno: Alumno) {
+
+    if (alumno.id === 0) {
+      alumno.id = Math.max(...this.alumnos.map(a => a.id), 0) + 1;
+      this.alumnos.push(alumno);
+    } else {
+      const index = this.alumnos.findIndex(a => a.id === alumno.id);
+      if (index !== -1) {
+        this.alumnos[index] = alumno;
+      }
+    }
+
+    this.mostrarDialogo = false;
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Guardado',
+      detail: 'Alumno guardado correctamente'
+    });
+  }
+
   eliminarAlumno(alumno: Alumno) {
-    this.alumnos = this.alumnos.filter((a) => a.id !== alumno.id);
+
+    this.alumnos = this.alumnos.filter(a => a.id !== alumno.id);
+
     this.messageService.add({
       severity: 'warn',
       summary: 'Eliminado',
-      detail: 'Alumno eliminado.',
+      detail: 'Alumno eliminado'
     });
   }
 }
