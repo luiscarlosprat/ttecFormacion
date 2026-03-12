@@ -1,0 +1,39 @@
+.contenedor {
+  padding: 20px;
+}
+
+.barra-filtros {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.barra-filtros input {
+  padding: 8px;
+  min-width: 250px;
+}
+
+.barra-filtros button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.lista-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card-producto {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+}
+
+.barra-superior {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}

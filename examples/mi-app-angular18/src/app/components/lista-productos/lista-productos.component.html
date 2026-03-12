@@ -1,0 +1,41 @@
+<div class="barra-superior">
+  <button (click)="cerrarSesion()">Cerrar sesión</button>
+</div>
+<div class="contenedor">
+  <h1>Productos</h1>
+
+  <div class="barra-filtros">
+    <input
+      type="text"
+      [(ngModel)]="textoBusqueda"
+      placeholder="Buscar por nombre o descripción"
+    />
+
+    <button (click)="seleccionarCategoria(null)">
+      Todas
+    </button>
+
+    <button
+      *ngFor="let categoria of categorias"
+      (click)="seleccionarCategoria(categoria.id)"
+    >
+      {{ categoria.name }}
+    </button>
+  </div>
+
+  <div class="lista-productos">
+    <div class="card-producto" *ngFor="let producto of productosFiltrados">
+      <h3>{{ producto.name }}</h3>
+
+      <p><strong>Categoría:</strong> {{ obtenerNombreCategoria(producto.categoryId) }}</p>
+
+      <p *ngIf="producto.description">
+        <strong>Descripción:</strong> {{ producto.description }}
+      </p>
+
+      <p *ngIf="producto.price !== undefined">
+        <strong>Precio:</strong> {{ producto.price }} €
+      </p>
+    </div>
+  </div>
+</div>

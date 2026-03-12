@@ -1,0 +1,17 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Login</h1>
+
+    <p>Introduce tu email o username</p>
+
+    <input
+      type="text"
+      [(ngModel)]="email"
+      placeholder="Email o username"
+    />
+
+    <button (click)="iniciarSesion()">Entrar</button>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+  </div>
+</div>
