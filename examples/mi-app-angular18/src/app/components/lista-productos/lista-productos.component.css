@@ -1,5 +1,124 @@
+.barra-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.usuario-info {
+  font-weight: 600;
+}
+
+.rol {
+  font-weight: 400;
+  margin-left: 6px;
+  color: #666;
+}
+
+.acciones-superiores {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-carrito {
+  font-weight: 600;
+}
+
+.panel-carrito {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background: #f9f9f9;
+}
+
+.item-carrito {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.controles-carrito {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.total-carrito {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
 .contenedor {
   padding: 20px;
+}
+
+.admin-panel {
+  margin-bottom: 20px;
+}
+
+.btn-admin {
+  padding: 10px 16px;
+  background-color: #3a7cff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.mensaje-ok {
+  color: #2e7d32;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.mensaje-error {
+  color: #c62828;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.modal-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-producto {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 420px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-producto input,
+.modal-producto textarea,
+.modal-producto select {
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-producto textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.acciones-modal {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .barra-filtros {
@@ -30,10 +149,34 @@
   border-radius: 8px;
   padding: 16px;
   background: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
-.barra-superior {
+.admin-botones {
+  margin-top: 10px;
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.btn-editar {
+  padding: 6px 10px;
+  background-color: #ffc107;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-eliminar {
+  padding: 6px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-anadir {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
 }

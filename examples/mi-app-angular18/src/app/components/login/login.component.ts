@@ -2,13 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
-interface User {
-  id: number;
-  name?: string;
-  username?: string;
-  email?: string;
-}
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,41 +12,107 @@ interface User {
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  email = '';
-  error = '';
 
-  apiUsersUrl = 'http://localhost:2502/api/Users';
+  modo: 'login' | 'registro' = 'login';
 
-  constructor(private router: Router) {}
+  loginUsername = '';
+  loginPassword = '';
+  errorLogin = '';
 
-  async iniciarSesion(): Promise<void> {
-    this.error = '';
+  registerUsername = '';
+  registerEmail = '';
+  registerPassword = '';
+  registerPasswordConfirm = '';
+  errorRegistro = '';
+  mensajeRegistro = '';
 
-    try {
-      const response = await fetch(this.apiUsersUrl);
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
-      if (!response.ok) {
-        throw new Error('No se pudieron cargar los usuarios');
-      }
-
-      const usuarios: User[] = await response.json();
-
-      const usuarioEncontrado = usuarios.find(
-        u =>
-          (u.email && u.email.toLowerCase() === this.email.toLowerCase()) ||
-          (u.username && u.username.toLowerCase() === this.email.toLowerCase())
-      );
-
-      if (!usuarioEncontrado) {
-        this.error = 'Usuario no encontrado';
-        return;
-      }
-
-      localStorage.setItem('usuarioLogueado', JSON.stringify(usuarioEncontrado));
-      await this.router.navigate(['/productos']);
-    } catch (error) {
-      console.error(error);
-      this.error = 'Error al iniciar sesión';
+  ngOnInit(): void {
+    if (this.authService.estaLogueado()) {
+      this.router.navigate(['/productos']);
     }
   }
+
+  cambiarModo(nuevoModo: 'login' | 'registro'): void {
+    this.modo = nuevoModo;
+    this.errorLogin = '';
+    this.errorRegistro = '';
+    this.mensajeRegistro = '';
+  }
+
+  async iniciarSesion(): Promise<void> {
+
+    this.errorLogin = '';
+
+    if (!this.loginUsername.trim() || !this.loginPassword.trim()) {
+      this.errorLogin = 'Debes rellenar usuario y contraseña';
+      return;
+    }
+
+    try {
+
+      await this.authService.login(
+        this.loginUsername,
+        this.loginPassword
+      );
+
+      await this.router.navigate(['/productos']);
+
+    } catch (error) {
+
+      this.errorLogin = 'Usuario o contraseña incorrectos';
+
+    }
+
+  }
+
+  async crearCuenta(): Promise<void> {
+
+    this.errorRegistro = '';
+    this.mensajeRegistro = '';
+
+    if (
+      !this.registerUsername.trim() ||
+      !this.registerEmail.trim() ||
+      !this.registerPassword.trim() ||
+      !this.registerPasswordConfirm.trim()
+    ) {
+      this.errorRegistro = 'Debes rellenar todos los campos';
+      return;
+    }
+
+    if (this.registerPassword !== this.registerPasswordConfirm) {
+      this.errorRegistro = 'Las contraseñas no coinciden';
+      return;
+    }
+
+    try {
+
+      await this.authService.register(
+        this.registerUsername,
+        this.registerEmail,
+        this.registerPassword
+      );
+
+      this.mensajeRegistro = 'Cuenta creada correctamente. Ya puedes iniciar sesión.';
+
+      this.registerUsername = '';
+      this.registerEmail = '';
+      this.registerPassword = '';
+      this.registerPasswordConfirm = '';
+
+      this.modo = 'login';
+
+    } catch (error) {
+
+      this.errorRegistro = 'No se pudo crear la cuenta';
+
+    }
+
+  }
+
 }

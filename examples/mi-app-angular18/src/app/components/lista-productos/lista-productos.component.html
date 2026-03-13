@@ -1,8 +1,97 @@
 <div class="barra-superior">
-  <button (click)="cerrarSesion()">Cerrar sesión</button>
+  <div class="usuario-info" *ngIf="usuarioLogueado">
+    Hola, {{ usuarioLogueado.username || usuarioLogueado.email }}
+    <span class="rol" *ngIf="usuarioLogueado.role">({{ usuarioLogueado.role }})</span>
+  </div>
+
+  <div class="acciones-superiores">
+    <button class="btn-carrito" (click)="alternarCarrito()">
+      Carrito ({{ totalItemsCarrito }})
+    </button>
+
+    <button (click)="cerrarSesion()">Cerrar sesión</button>
+  </div>
 </div>
+
+<div class="panel-carrito" *ngIf="mostrarCarrito">
+  <h2>Carrito</h2>
+
+  <div *ngIf="carrito.length === 0">
+    El carrito está vacío.
+  </div>
+
+  <div *ngFor="let item of carrito" class="item-carrito">
+    <div>
+      <strong>{{ item.name }}</strong>
+      <p *ngIf="item.price !== undefined">
+        {{ item.price }} € x {{ item.cantidad }}
+      </p>
+    </div>
+
+    <div class="controles-carrito">
+      <button (click)="disminuirCantidad(item.id)">-</button>
+      <span>{{ item.cantidad }}</span>
+      <button (click)="aumentarCantidad(item.id)">+</button>
+      <button (click)="quitarDelCarrito(item.id)">Eliminar</button>
+    </div>
+  </div>
+
+  <div class="total-carrito" *ngIf="carrito.length > 0">
+    <strong>Total: {{ totalCarrito.toFixed(2) }} €</strong>
+  </div>
+
+  <button *ngIf="carrito.length > 0" (click)="vaciarCarrito()">
+    Vaciar carrito
+  </button>
+</div>
+
 <div class="contenedor">
   <h1>Productos</h1>
+
+  <div *ngIf="mensajeAdmin" class="mensaje-ok">
+    {{ mensajeAdmin }}
+  </div>
+
+  <div *ngIf="errorAdmin" class="mensaje-error">
+    {{ errorAdmin }}
+  </div>
+
+  <div *ngIf="esAdmin()" class="admin-panel">
+    <button class="btn-admin" (click)="abrirCrearProducto()">
+      Crear producto
+    </button>
+  </div>
+
+  <div class="modal-fondo" *ngIf="mostrarFormularioProducto">
+    <div class="modal-producto">
+      <h2>{{ modoFormulario === 'crear' ? 'Crear producto' : 'Editar producto' }}</h2>
+
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="productoForm.name" />
+
+      <label>Descripción</label>
+      <textarea [(ngModel)]="productoForm.description"></textarea>
+
+      <label>Precio</label>
+      <input type="number" [(ngModel)]="productoForm.price" />
+
+      <label>Categoría</label>
+      <select [(ngModel)]="productoForm.categoryId">
+        <option [ngValue]="undefined">Selecciona una categoría</option>
+        <option *ngFor="let categoria of categorias" [ngValue]="categoria.id">
+          {{ categoria.name }}
+        </option>
+      </select>
+
+      <div class="acciones-modal">
+        <button (click)="guardarProducto()">
+          {{ modoFormulario === 'crear' ? 'Crear' : 'Guardar cambios' }}
+        </button>
+
+        <button (click)="cerrarFormularioProducto()">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
   <div class="barra-filtros">
     <input
@@ -27,15 +116,34 @@
     <div class="card-producto" *ngFor="let producto of productosFiltrados">
       <h3>{{ producto.name }}</h3>
 
-      <p><strong>Categoría:</strong> {{ obtenerNombreCategoria(producto.categoryId) }}</p>
+      <p>
+        <strong>Categoría:</strong>
+        {{ obtenerNombreCategoria(producto.categoryId) }}
+      </p>
 
       <p *ngIf="producto.description">
-        <strong>Descripción:</strong> {{ producto.description }}
+        <strong>Descripción:</strong>
+        {{ producto.description }}
       </p>
 
       <p *ngIf="producto.price !== undefined">
-        <strong>Precio:</strong> {{ producto.price }} €
+        <strong>Precio:</strong>
+        {{ producto.price }} €
       </p>
+
+      <div *ngIf="esAdmin()" class="admin-botones">
+        <button class="btn-editar" (click)="abrirEditarProducto(producto)">
+          Editar
+        </button>
+
+        <button class="btn-eliminar" (click)="eliminarProducto(producto)">
+          Eliminar
+        </button>
+      </div>
+
+      <button class="btn-anadir" (click)="anadirAlCarrito(producto)">
+        Añadir al carrito
+      </button>
     </div>
   </div>
 </div>
